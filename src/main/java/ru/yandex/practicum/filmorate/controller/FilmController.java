@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,27 +31,12 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Creating film: {}", film);
-
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.warn("Validation failed: Film name must not be empty.");
-            throw new ValidationException("Название фильма не может быть пустым");
-        }
-
-        if (film.getDescription().length() > 200) {
-            log.warn("Validation failed: Description is too long. Maximum length: 200.");
-            throw new ValidationException("Максимальная длина описания - 200 символов");
-        }
 
         if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             log.warn("Validation failed: Film release date is before the minimum allowed date.");
-            throw new ValidationException("Дата релиза не может быть раньше 28.12.1895");
-        }
-
-        if (film.getDuration() < 0) {
-            log.warn("Validation failed: Duration should be a positive number.");
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
+            throw new ValidationException("Film release date is before the minimum allowed date: 28.12.1895");
         }
 
         film.setId(getNextId());
@@ -61,34 +47,26 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film newFilm) {
+    public Film update(@Valid @RequestBody Film newFilm) {
         log.info("Updating film with id: {}", newFilm.getId());
 
         if (newFilm.getId() == null) {
             log.warn("Validation failed: Film ID must be provided.");
-            throw new ValidationException("Id должен быть указан");
+            throw new ValidationException("Film ID must be provided");
         }
 
         Film oldFilm = films.get(newFilm.getId());
         if (oldFilm == null) {
             log.error("Film not found: id = {}", newFilm.getId());
-            throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+            throw new NotFoundException("Film with id = " + newFilm.getId() + " not found");
         }
 
-        if (newFilm.getName() != null) {
-            oldFilm.setName(newFilm.getName());
-        }
-        if (newFilm.getDescription() != null) {
-            oldFilm.setDescription(newFilm.getDescription());
-        }
-        if (newFilm.getReleaseDate() != null) {
-            oldFilm.setReleaseDate(newFilm.getReleaseDate());
-        }
-        if (newFilm.getDuration() > 0) {
-            oldFilm.setDuration(newFilm.getDuration());
-        }
+        oldFilm.setName(newFilm.getName());
+        oldFilm.setDescription(newFilm.getDescription());
+        oldFilm.setReleaseDate(newFilm.getReleaseDate());
+        oldFilm.setDuration(newFilm.getDuration());
+
         log.info("Film updated successfully: {}", oldFilm);
-
         return oldFilm;
     }
 

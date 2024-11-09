@@ -34,7 +34,7 @@ public class UserController {
         log.info("Creating user: {}", user);
 
         if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getEmail());
+            user.setName(user.getLogin());
             log.info("Name not provided. Using email instead of name.");
         }
 
@@ -61,7 +61,11 @@ public class UserController {
                     throw new ValidationException("Email is already in use");
                 }
             }
+            oldUser.setName(newUser.getName());
             oldUser.setEmail(newUser.getEmail());
+            oldUser.setLogin(newUser.getLogin());
+            oldUser.setBirthday(newUser.getBirthday());
+
             log.info("User updated successfully: {}", oldUser);
 
             return oldUser;

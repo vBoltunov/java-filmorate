@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * User.
@@ -25,5 +25,5 @@ public class User {
     String name;
 
     @Past(message = "Birth date must not be in the future")
-    Date birthday;
+    LocalDate birthday;
 }

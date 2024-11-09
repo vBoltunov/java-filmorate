@@ -67,7 +67,7 @@ class FilmControllerTest {
         film.setName("Valid Name");
         film.setDescription("A valid description");
         film.setReleaseDate(LocalDate.of(2021, 1, 1));
-        film.setDuration(-10); // Negative duration
+        film.setDuration(-10);
 
         Set<ConstraintViolation<Film>> violations = ValidationUtil.validate(film);
 

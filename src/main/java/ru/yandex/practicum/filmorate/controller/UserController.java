@@ -41,6 +41,7 @@ public class UserController {
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("User created successfully: {}", user);
+
         return user;
     }
 
@@ -62,6 +63,7 @@ public class UserController {
             }
             oldUser.setEmail(newUser.getEmail());
             log.info("User updated successfully: {}", oldUser);
+
             return oldUser;
         }
         log.error("User not found: id = {}", newUser.getId());

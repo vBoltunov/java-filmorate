@@ -35,7 +35,7 @@ public class UserController {
 
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.info("Name not provided. Using email instead of name.");
+            log.info("Name not provided. Using login instead of name.");
         }
 
         user.setId(getNextId());

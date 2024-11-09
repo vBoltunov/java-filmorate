@@ -75,7 +75,7 @@ class UserControllerTest {
 
         userController.create(user);
 
-        assertEquals("example@example.com", user.getName());
+        assertEquals("ValidLogin", user.getName());
     }
 
     @Test

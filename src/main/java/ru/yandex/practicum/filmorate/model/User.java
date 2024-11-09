@@ -9,7 +9,12 @@ import lombok.Data;
 import java.time.LocalDate;
 
 /**
- * User.
+ * Represents a user with its essential details.
+ *
+ * This class includes attributes such as the user's email, login, name, and birthday.
+ * It uses validation annotations to ensure that the user's email is a valid email address,
+ * the login is not null or blank and contains no whitespaces,
+ * and the birthday is a date in the past.
  */
 @Data
 public class User {

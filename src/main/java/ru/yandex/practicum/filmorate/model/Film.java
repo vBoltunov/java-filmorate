@@ -9,7 +9,11 @@ import lombok.Data;
 import java.time.LocalDate;
 
 /**
- * Film.
+ * Represents a film with its essential details.
+ *
+ * This class includes attributes such as the film's name, description, release date, and duration.
+ * It uses validation annotations to ensure that the film's name is not empty, the description does not exceed 200 characters,
+ * the release date is not null, and the duration is a positive number.
  */
 @Data
 public class Film {

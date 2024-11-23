@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a film with its essential details.
@@ -30,4 +32,6 @@ public class Film {
 
     @Positive(message = "Duration should be a positive number")
     long duration;
+
+    Set<Long> likes = new HashSet<>();
 }

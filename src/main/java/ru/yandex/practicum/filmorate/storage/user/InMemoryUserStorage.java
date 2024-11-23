@@ -86,4 +86,3 @@ public class InMemoryUserStorage implements UserStorage {
         return ++currentMaxId;
     }
 }
-

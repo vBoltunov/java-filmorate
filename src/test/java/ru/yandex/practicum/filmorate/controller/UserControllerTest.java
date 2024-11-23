@@ -4,6 +4,8 @@ import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
 import java.time.LocalDate;
@@ -19,7 +21,8 @@ class UserControllerTest {
     @BeforeEach
     public void setUp() {
         user = new User();
-        userController = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        userController = new UserController(userStorage);
     }
 
     @Test
@@ -73,7 +76,7 @@ class UserControllerTest {
         user.setBirthday(LocalDate.of(2021, 1, 1));
         user.setLogin("ValidLogin");
 
-        userController.create(user);
+        userController.createUser(user);
 
         assertEquals("ValidLogin", user.getName());
     }

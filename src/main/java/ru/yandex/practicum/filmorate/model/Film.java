@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Represents a film with its essential details.
  *
- * This class includes attributes such as the film's name, description, release date, and duration.
+ * This class includes attributes such as the film's name, description, release date, duration and list of users' IDs who liked the film.
  * It uses validation annotations to ensure that the film's name is not empty, the description does not exceed 200 characters,
  * the release date is not null, and the duration is a positive number.
  */

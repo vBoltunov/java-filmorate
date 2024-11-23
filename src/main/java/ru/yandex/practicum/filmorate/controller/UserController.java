@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public Optional<User> getUser(@PathVariable Long userId){
+    public Optional<User> getUser(@PathVariable Long userId) {
         return userStorage.getUserById(userId);
     }
 

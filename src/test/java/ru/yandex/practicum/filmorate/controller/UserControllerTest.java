@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
@@ -22,7 +23,8 @@ class UserControllerTest {
     public void setUp() {
         user = new User();
         UserStorage userStorage = new InMemoryUserStorage();
-        userController = new UserController(userStorage);
+        UserService userService = new UserService(userStorage);
+        userController = new UserController(userStorage, userService);
     }
 
     @Test

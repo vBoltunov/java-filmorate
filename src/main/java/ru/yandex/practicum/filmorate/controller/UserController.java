@@ -28,6 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
     private final UserStorage userStorage;
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> getUsers() {
@@ -40,6 +41,20 @@ public class UserController {
         return userStorage.getUserById(userId);
     }
 
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<Map<String, Long>>> getFriends(@PathVariable Long id) {
+        log.info("Fetching friends for user with id: {}", id);
+        List<Map<String, Long>> friends = userService.getFriends(id);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/friends/common/{friendId}")
+    public ResponseEntity<List<Map<String, Long>>> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Fetching common friends for users with id: {} and {}", id, friendId);
+        List<Map<String, Long>> commonFriends = userService.getCommonFriends(id, friendId);
+        return new ResponseEntity<>(commonFriends, HttpStatus.OK);
+    }
+
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         log.info("Creating user: {}", user);
@@ -50,5 +65,20 @@ public class UserController {
     public User updateUser(@Valid @RequestBody User user) {
         log.info("Updating user with id: {}", user.getId());
         return userStorage.updateUser(user);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Adding friend with id: {} to user with id: {}", friendId, id);
+        userService.addFriend(id, friendId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Deleting friend with id: {}", friendId);
+        userService.removeFriend(id, friendId);
+        userService.removeFriend(friendId, id);
     }
 }

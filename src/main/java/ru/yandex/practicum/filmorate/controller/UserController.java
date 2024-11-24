@@ -1,85 +1,84 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserStorage userStorage;
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> getUsers() {
         log.info("Fetching all users.");
-        return users.values();
+        return userStorage.getUsers();
+    }
+
+    @GetMapping("/{userId}")
+    public Optional<User> getUser(@PathVariable Long userId) {
+        return userStorage.getUserById(userId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<Map<String, Long>>> getFriends(@PathVariable Long id) {
+        log.info("Fetching friends for user with id: {}", id);
+        List<Map<String, Long>> friends = userService.getFriends(id);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/friends/common/{friendId}")
+    public ResponseEntity<List<Map<String, Long>>> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Fetching common friends for users with id: {} and {}", id, friendId);
+        List<Map<String, Long>> commonFriends = userService.getCommonFriends(id, friendId);
+        return new ResponseEntity<>(commonFriends, HttpStatus.OK);
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         log.info("Creating user: {}", user);
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Name not provided. Using login instead of name.");
-        }
-
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.info("User created successfully: {}", user);
-
-        return user;
+        return userStorage.createUser(user);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User newUser) {
-        log.info("Updating user with id: {}", newUser.getId());
-
-        if (newUser.getId() == null) {
-            log.warn("Validation failed: ID must be provided.");
-            throw new ValidationException("Id должен быть указан");
-        }
-        if (users.containsKey(newUser.getId())) {
-            User oldUser = users.get(newUser.getId());
-            for (User savedUser : users.values()) {
-                if (Objects.equals(savedUser.getEmail(), newUser.getEmail())) {
-                    log.warn("Validation failed: Email is already in use.");
-                    throw new ValidationException("Email is already in use");
-                }
-            }
-            oldUser.setName(newUser.getName());
-            oldUser.setEmail(newUser.getEmail());
-            oldUser.setLogin(newUser.getLogin());
-            oldUser.setBirthday(newUser.getBirthday());
-
-            log.info("User updated successfully: {}", oldUser);
-
-            return oldUser;
-        }
-        log.error("User not found: id = {}", newUser.getId());
-        throw new NotFoundException("User with id = " + newUser.getId() + " not found");
+    public User updateUser(@Valid @RequestBody User user) {
+        log.info("Updating user with id: {}", user.getId());
+        return userStorage.updateUser(user);
     }
 
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Adding friend with id: {} to user with id: {}", friendId, id);
+        userService.addFriend(id, friendId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Deleting friend with id: {}", friendId);
+        userService.removeFriend(id, friendId);
+        userService.removeFriend(friendId, id);
     }
 }

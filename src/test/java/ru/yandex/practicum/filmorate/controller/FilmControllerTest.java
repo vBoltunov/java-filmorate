@@ -3,8 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
 import java.time.LocalDate;
@@ -20,7 +24,10 @@ class FilmControllerTest {
     @BeforeEach
     public void setUp() {
         film = new Film();
-        filmController = new FilmController();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmService(filmStorage, userStorage);
+        filmController = new FilmController(filmStorage, filmService);
     }
 
     @Test
@@ -43,7 +50,8 @@ class FilmControllerTest {
         film.setReleaseDate(LocalDate.of(1890, 1, 1));
         film.setDuration(120);
 
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.create(film));
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class, () -> filmController.createFilm(film));
 
         assertEquals("Film release date is before the minimum allowed date: 28.12.1895", exception.getMessage());
     }

@@ -46,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film oldFilm = films.get(newFilm.getId());
         if (oldFilm == null) {
             log.error("Film not found: id = {}", newFilm.getId());
-            throw new NotFoundException("Film with id = " + newFilm.getId() + " not found");
+            throw new NotFoundException(String.format("Film with id %s not found", newFilm.getId()));
         }
 
         oldFilm.setName(newFilm.getName());

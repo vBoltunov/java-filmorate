@@ -25,13 +25,13 @@ public class FilmService {
 
     private void validateUserExist(Long userId) {
         if (userStorage.getUserById(userId).isEmpty()) {
-            throw new NotFoundException("User with id = " + userId + " not found");
+            throw new NotFoundException(String.format("User with id %s not found", userId));
         }
     }
 
     private Film getFilmByIdOrThrow(Long filmId) {
         return filmStorage.getFilmById(filmId).orElseThrow(() ->
-                new NotFoundException("Film with id = " + filmId + " not found"));
+                new NotFoundException(String.format("Film with id %s not found", filmId)));
     }
 
     private void initializeLikes(Film film) {

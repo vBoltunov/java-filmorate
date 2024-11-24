@@ -26,7 +26,7 @@ public class UserService {
 
     private User getUserByIdOrThrow(Long userId) {
         return userStorage.getUserById(userId).orElseThrow(() ->
-                new NotFoundException("User with id = " + userId + " not found"));
+                new NotFoundException(String.format("User with id %s not found", userId)));
     }
 
     private void initializeFriends(User user) {

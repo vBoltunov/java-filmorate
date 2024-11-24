@@ -69,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
             return oldUser;
         }
         log.error("User not found: id = {}", newUser.getId());
-        throw new NotFoundException("User with id = " + newUser.getId() + " not found");
+        throw new NotFoundException(String.format("User with id %s not found", newUser.getId()));
     }
 
     @Override

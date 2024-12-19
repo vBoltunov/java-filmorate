@@ -7,11 +7,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a film with its essential details.
  *
- * This class includes attributes such as the film's name, description, release date, and duration.
+ * This class includes attributes such as the film's name, description, release date, duration and list of users' IDs who liked the film.
  * It uses validation annotations to ensure that the film's name is not empty, the description does not exceed 200 characters,
  * the release date is not null, and the duration is a positive number.
  */
@@ -30,4 +32,6 @@ public class Film {
 
     @Positive(message = "Duration should be a positive number")
     long duration;
+
+    Set<Long> likes = new HashSet<>();
 }

@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS film_genres
     PRIMARY KEY (film_id, genre_id)
 );
 
-
 CREATE TABLE IF NOT EXISTS mpa
 (
     id   BIGINT PRIMARY KEY AUTO_INCREMENT,

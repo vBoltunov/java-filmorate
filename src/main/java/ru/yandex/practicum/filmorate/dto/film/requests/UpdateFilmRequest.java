@@ -19,18 +19,23 @@ public class UpdateFilmRequest {
     public boolean hasName() {
         return ! (name == null || name.isBlank());
     }
+
     public boolean hasDescription() {
         return ! (description == null || description.isBlank());
     }
+
     public boolean hasReleaseDate() {
         return releaseDate != null;
     }
+
     public boolean hasDuration() {
         return duration != null;
     }
+
     public boolean hasMpaId() {
         return mpaId != null;
     }
+
     public boolean hasGenreIds() {
         return ! (genreIds == null || genreIds.isEmpty());
     }

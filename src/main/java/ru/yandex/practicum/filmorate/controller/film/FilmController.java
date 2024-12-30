@@ -68,7 +68,7 @@ public class FilmController {
         filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping(LIKES_ENDPOINT+ "/{user-id}")
+    @DeleteMapping(LIKES_ENDPOINT + "/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     public void removeLike(@PathVariable("film-id") Long filmId, @PathVariable("user-id") Long userId) {
         log.info("Removing like: filmId={}, userId={}", filmId, userId);

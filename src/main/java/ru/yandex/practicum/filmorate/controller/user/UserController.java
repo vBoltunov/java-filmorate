@@ -28,6 +28,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final FriendService friendService;
+    private static final String FRIENDS_ENDPOINT = "/{userId}/friends";
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -61,7 +62,7 @@ public class UserController {
         return userService.updateUser(userId, request);
     }
 
-    @PutMapping("/{userId}/friends/{friendId}")
+    @PutMapping(FRIENDS_ENDPOINT + "/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public void addFriend(
             @PathVariable Long userId,
@@ -71,7 +72,7 @@ public class UserController {
         friendService.addFriend(userId, friendId);
     }
 
-    @DeleteMapping("/{userId}/friends/{friendId}")
+    @DeleteMapping(FRIENDS_ENDPOINT + "/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public void removeFriend(
             @PathVariable Long userId,
@@ -81,7 +82,7 @@ public class UserController {
         friendService.removeFriend(userId, friendId);
     }
 
-    @GetMapping("/{userId}/friends")
+    @GetMapping(FRIENDS_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getFriends(
             @PathVariable Long userId,
@@ -91,7 +92,7 @@ public class UserController {
         return friendService.getFriends(userId, onlyConfirmed);
     }
 
-    @GetMapping("/{userId}/friends/common/{otherUserId}")
+    @GetMapping(FRIENDS_ENDPOINT + "/common/{otherUserId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getCommonFriends(
             @PathVariable Long userId,

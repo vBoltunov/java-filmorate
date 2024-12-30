@@ -27,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
+    private static final String LIKES_ENDPOINT = "/{filmId}/like";
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -60,14 +61,14 @@ public class FilmController {
         return filmService.updateFilm(filmId, request);
     }
 
-    @PutMapping("/{filmId}/like/{userId}")
+    @PutMapping(LIKES_ENDPOINT + "/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void addLike(@PathVariable Long filmId, @PathVariable Long userId) {
         log.info("Adding like: filmId={}, userId={}", filmId, userId);
         filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping("/{filmId}/like/{userId}")
+    @DeleteMapping(LIKES_ENDPOINT+ "/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
         log.info("Removing like: filmId={}, userId={}", filmId, userId);

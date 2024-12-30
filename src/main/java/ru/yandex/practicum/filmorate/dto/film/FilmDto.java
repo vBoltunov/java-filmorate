@@ -1,20 +1,23 @@
 package ru.yandex.practicum.filmorate.dto.film;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 
 import java.time.LocalDate;
 import java.util.Collection;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class FilmDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
-    private String name;
-    private String description;
-    private LocalDate releaseDate;
-    private long duration;
-    private Mpa mpa;
-    private Collection<GenreDto> genres;
+    Long id;
+    String name;
+    String description;
+    LocalDate releaseDate;
+    long duration;
+    Mpa mpa;
+    Collection<GenreDto> genres;
 }

@@ -8,15 +8,16 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Represents a user with its essential details.
  *
- * This class includes attributes such as the user's email, login, name, birthday and list of user's friends' IDs.
+ * This class includes attributes such as the user's id, email, login, name, birthday and list of user's friends' IDs.
  * It uses validation annotations to ensure that the user's email is a valid email address,
- * the login is not null or blank and contains no whitespaces,
- * and the birthday is a date in the past.
+ * the login is not null or blank and contains no whitespaces, and the birthday is a date in the past.
+ * It uses the `@Data` annotation to automatically generate boilerplate code like getters, setters, and constructors.
  */
 @Data
 public class User {
@@ -34,5 +35,5 @@ public class User {
     @Past(message = "Birth date must not be in the future")
     LocalDate birthday;
 
-    Set<Long> friends = new HashSet<>();
+    List<Long> friends;
 }

@@ -34,11 +34,11 @@ public class Film {
     LocalDate releaseDate;
 
     @Positive(message = "Duration should be a positive number")
-    long duration;
+    Long duration;
 
     Mpa mpa;
 
-    Set<Long> likes = new HashSet<>();
+    Set<Long> likes;
 
     List<Long> genreIds;
 }

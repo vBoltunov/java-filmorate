@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,78 +12,72 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.enums.SortOrder;
+import ru.yandex.practicum.filmorate.dto.film.FilmDto;
+import ru.yandex.practicum.filmorate.dto.film.requests.NewFilmRequest;
+import ru.yandex.practicum.filmorate.dto.film.requests.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @GetMapping
-    public Collection<Film> getFilms() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<FilmDto> getFilms() {
         log.info("Fetching all films.");
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<Film>> getFilm(@PathVariable Long id) {
-        Optional<Film> film = filmStorage.getFilmById(id);
-        return ResponseEntity.ok(film);
-    }
-
-    @GetMapping("/popular")
-    public Collection<Film> showPopular(
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "desc") String sort) {
-
-        SortOrder sortOrder = SortOrder.sortOrder(sort);
-        if (sortOrder == null) {
-            throw new IllegalArgumentException("Invalid sort order: " + sort);
-        }
-        if (size < 0) {
-            throw new IllegalArgumentException("Requested collection size must be greater than 0");
-        }
-        if (from < 0) {
-            throw new IllegalArgumentException("Starting position must be greater than 0");
-        }
-
-        return filmService.showPopular(from, size, sortOrder);
+    @GetMapping("/{filmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FilmDto getFilmById(@PathVariable Long filmId) {
+        log.info("Fetching film with id {}", filmId);
+        return filmService.getFilmById(filmId);
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) {
-        Film createdFilm = filmStorage.createFilm(film);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdFilm);
+    @ResponseStatus(HttpStatus.CREATED)
+    public FilmDto createFilm(@Valid @RequestBody NewFilmRequest filmRequest) {
+        log.info("Creating new film: {}", filmRequest);
+        return filmService.createFilm(filmRequest);
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        Film updatedFilm = filmStorage.updateFilm(film);
-        return ResponseEntity.ok(updatedFilm);
+    @ResponseStatus(HttpStatus.OK)
+    public FilmDto updateFilm(@RequestBody UpdateFilmRequest request) {
+        Long filmId = request.getId();
+        if (filmId == null) {
+            throw new IllegalArgumentException("Film ID is required");
+        }
+        log.info("Updating film with id: {}", filmId);
+        return filmService.updateFilm(filmId, request);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) {
-        log.info("Adding friend with id: {} to user with id: {}", userId, id);
-        filmService.addLike(id, userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        log.info("Adding like: filmId={}, userId={}", filmId, userId);
+        filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> removeLike(@PathVariable Long id, @PathVariable Long userId) {
-        log.info("Removing like: filmId={}, userId={}", id, userId);
-        filmService.removeLike(id, userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        log.info("Removing like: filmId={}, userId={}", filmId, userId);
+        filmService.removeLike(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Fetching popular films.");
+        return filmService.getPopularFilms(count);
     }
 }

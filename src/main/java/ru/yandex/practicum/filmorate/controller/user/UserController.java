@@ -28,7 +28,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final FriendService friendService;
-    private static final String FRIENDS_ENDPOINT = "/{userId}/friends";
+    private static final String FRIENDS_ENDPOINT = "/{user-id}/friends";
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -37,9 +37,9 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto getUserById(@PathVariable("userId") Long userId) {
+    public UserDto getUserById(@PathVariable("user-id") Long userId) {
         log.info("Fetching user with id: {}", userId);
         return userService.getUserById(userId);
     }
@@ -62,21 +62,21 @@ public class UserController {
         return userService.updateUser(userId, request);
     }
 
-    @PutMapping(FRIENDS_ENDPOINT + "/{friendId}")
+    @PutMapping(FRIENDS_ENDPOINT + "/{friend-id}")
     @ResponseStatus(HttpStatus.OK)
     public void addFriend(
-            @PathVariable Long userId,
-            @PathVariable Long friendId
+            @PathVariable("user-id") Long userId,
+            @PathVariable("friend-id") Long friendId
     ) {
         log.info("Adding friend: friendId={}, userId={}", friendId, userId);
         friendService.addFriend(userId, friendId);
     }
 
-    @DeleteMapping(FRIENDS_ENDPOINT + "/{friendId}")
+    @DeleteMapping(FRIENDS_ENDPOINT + "/{friend-id}")
     @ResponseStatus(HttpStatus.OK)
     public void removeFriend(
-            @PathVariable Long userId,
-            @PathVariable Long friendId
+            @PathVariable("user-id") Long userId,
+            @PathVariable("friend-id") Long friendId
     ) {
         log.info("Deleting friend: friendId={}, userId={}", friendId, userId);
         friendService.removeFriend(userId, friendId);
@@ -85,18 +85,18 @@ public class UserController {
     @GetMapping(FRIENDS_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getFriends(
-            @PathVariable Long userId,
+            @PathVariable("user-id") Long userId,
             @RequestParam(defaultValue = "true") boolean onlyConfirmed
     ) {
         log.info("Fetching friends for user with id: {}", userId);
         return friendService.getFriends(userId, onlyConfirmed);
     }
 
-    @GetMapping(FRIENDS_ENDPOINT + "/common/{otherUserId}")
+    @GetMapping(FRIENDS_ENDPOINT + "/common/{other-user-id}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getCommonFriends(
-            @PathVariable Long userId,
-            @PathVariable Long otherUserId
+            @PathVariable("user-id") Long userId,
+            @PathVariable("other-user-id") Long otherUserId
     ) {
         log.info("Fetching common friends for users with id: {} and {}", userId, otherUserId);
         return friendService.getCommonFriends(userId, otherUserId);

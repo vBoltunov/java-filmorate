@@ -27,9 +27,9 @@ public class MpaController {
         return filmService.getAllMpa();
     }
 
-    @GetMapping("/{mpaId}")
+    @GetMapping("/{mpa-id}")
     @ResponseStatus(HttpStatus.OK)
-    public MpaDto getMpaById(@PathVariable Long mpaId) {
+    public MpaDto getMpaById(@PathVariable("mpa-id") Long mpaId) {
         log.info("Fetching MPA by id: {}", mpaId);
         return filmService.getMpaById(mpaId);
     }

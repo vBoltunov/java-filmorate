@@ -27,9 +27,9 @@ public class GenreController {
         return filmService.getAllGenres();
     }
 
-    @GetMapping("/{genreId}")
+    @GetMapping("/{genre-id}")
     @ResponseStatus(HttpStatus.OK)
-    public GenreDto getGenreById(@PathVariable Long genreId) {
+    public GenreDto getGenreById(@PathVariable("genre-id") Long genreId) {
         log.info("Fetching genre by id: {}", genreId);
         return filmService.getGenreById(genreId);
     }

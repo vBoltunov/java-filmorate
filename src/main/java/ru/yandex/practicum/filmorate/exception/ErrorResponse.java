@@ -4,11 +4,11 @@ import lombok.Getter;
 
 public class ErrorResponse {
     @Getter
-    String error;
+    int error;
     String description;
 
 
-    public ErrorResponse(String error, String description) {
+    public ErrorResponse(int error, String description) {
         this.error = error;
         this.description = description;
     }

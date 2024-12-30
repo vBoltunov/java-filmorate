@@ -1,10 +1,8 @@
 package ru.yandex.practicum.filmorate.controller.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,73 +10,95 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.user.User;
+import ru.yandex.practicum.filmorate.dto.user.requests.NewUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.requests.UpdateUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.UserDto;
+import ru.yandex.practicum.filmorate.service.user.FriendService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
-    private final UserStorage userStorage;
     private final UserService userService;
+    private final FriendService friendService;
 
     @GetMapping
-    public Collection<User> getUsers() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> getUsers() {
         log.info("Fetching all users.");
-        return userStorage.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/{userId}")
-    public Optional<User> getUser(@PathVariable Long userId) {
-        return userStorage.getUserById(userId);
-    }
-
-    @GetMapping("/{id}/friends")
-    public ResponseEntity<List<Map<String, Long>>> getFriends(@PathVariable Long id) {
-        log.info("Fetching friends for user with id: {}", id);
-        List<Map<String, Long>> friends = userService.getFriends(id);
-        return new ResponseEntity<>(friends, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/friends/common/{friendId}")
-    public ResponseEntity<List<Map<String, Long>>> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Fetching common friends for users with id: {} and {}", id, friendId);
-        List<Map<String, Long>> commonFriends = userService.getCommonFriends(id, friendId);
-        return new ResponseEntity<>(commonFriends, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(@PathVariable("userId") Long userId) {
+        log.info("Fetching user with id: {}", userId);
+        return userService.getUserById(userId);
     }
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-        log.info("Creating user: {}", user);
-        return userStorage.createUser(user);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@RequestBody NewUserRequest userRequest) {
+        log.info("Creating new user: {}", userRequest);
+        return userService.createUser(userRequest);
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
-        log.info("Updating user with id: {}", user.getId());
-        return userStorage.updateUser(user);
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto updateUser(@RequestBody UpdateUserRequest request) {
+        Long userId = request.getId();
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+        log.info("Updating user with id: {}", userId);
+        return userService.updateUser(userId, request);
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Adding friend with id: {} to user with id: {}", friendId, id);
-        userService.addFriend(id, friendId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/{userId}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addFriend(
+            @PathVariable Long userId,
+            @PathVariable Long friendId
+    ) {
+        log.info("Adding friend: friendId={}, userId={}", friendId, userId);
+        friendService.addFriend(userId, friendId);
     }
 
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeFriend(
+            @PathVariable Long userId,
+            @PathVariable Long friendId
+    ) {
+        log.info("Deleting friend: friendId={}, userId={}", friendId, userId);
+        friendService.removeFriend(userId, friendId);
+    }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Deleting friend with id: {}", friendId);
-        userService.removeFriend(id, friendId);
-        userService.removeFriend(friendId, id);
+    @GetMapping("/{userId}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> getFriends(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "true") boolean onlyConfirmed
+    ) {
+        log.info("Fetching friends for user with id: {}", userId);
+        return friendService.getFriends(userId, onlyConfirmed);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherUserId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> getCommonFriends(
+            @PathVariable Long userId,
+            @PathVariable Long otherUserId
+    ) {
+        log.info("Fetching common friends for users with id: {} and {}", userId, otherUserId);
+        return friendService.getCommonFriends(userId, otherUserId);
     }
 }
+

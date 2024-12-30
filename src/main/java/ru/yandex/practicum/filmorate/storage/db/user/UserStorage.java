@@ -14,4 +14,6 @@ public interface UserStorage {
     User updateUser(User user);
 
     Optional<User> getUserById(Long id);
+
+    Optional<User> findByEmail(String email);
 }

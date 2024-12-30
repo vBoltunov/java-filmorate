@@ -8,14 +8,17 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Represents a film with its essential details.
  *
- * This class includes attributes such as the film's name, description, release date, duration and list of users' IDs who liked the film.
+ * This class includes attributes such as the film's id, name, description, release date, duration, MAP rating,
+ * list of users' IDs who liked the film and list of film's genre IDs.
  * It uses validation annotations to ensure that the film's name is not empty, the description does not exceed 200 characters,
  * the release date is not null, and the duration is a positive number.
+ * It uses the `@Data` annotation to automatically generate boilerplate code like getters, setters, and constructors.
  */
 @Data
 public class Film {
@@ -33,5 +36,9 @@ public class Film {
     @Positive(message = "Duration should be a positive number")
     long duration;
 
+    Mpa mpa;
+
     Set<Long> likes = new HashSet<>();
+
+    List<Long> genreIds;
 }

@@ -69,6 +69,9 @@ public class UserService {
                     .orElseThrow(() -> new NotFoundException(
                             FormatUtil.formatNotFoundMessage("User", userId)));
             updatedUser = userStorage.updateUser(updatedUser);
+            if (request.hasFriendsIds()) {
+                updatedUser.setFriendsIds(request.getFriendsIds());
+            }
             return UserMapper.mapToUserDto(updatedUser);
         } catch (NotFoundException e) {
             log.error("User not found: {}", e.getMessage());

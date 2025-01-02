@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a film with its essential details.
@@ -37,7 +36,7 @@ public class Film {
 
     Mpa mpa;
 
-    Set<Long> likes;
+    Long likes;
 
     List<Long> genreIds;
 }

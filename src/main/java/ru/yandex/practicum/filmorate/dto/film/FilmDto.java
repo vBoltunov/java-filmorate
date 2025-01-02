@@ -20,4 +20,5 @@ public class FilmDto {
     long duration;
     Mpa mpa;
     Collection<GenreDto> genres;
+    Long likes;
 }

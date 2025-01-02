@@ -33,5 +33,5 @@ public class User {
     @Past(message = "Birth date must not be in the future")
     LocalDate birthday;
 
-    List<Long> friends;
+    List<Long> friendsIds;
 }

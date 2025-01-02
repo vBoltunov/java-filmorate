@@ -39,4 +39,8 @@ public class UpdateFilmRequest {
     public boolean hasGenreIds() {
         return ! (genreIds == null || genreIds.isEmpty());
     }
+
+    public boolean hasLikes() {
+        return likes != null;
+    }
 }

@@ -14,7 +14,6 @@ public class UpdateUserRequest {
     private LocalDate birthday;
     private List<Long> friendsIds;
 
-
     public boolean hasEmail() {
         return ! (email == null || email.isBlank());
     }
@@ -29,5 +28,9 @@ public class UpdateUserRequest {
 
     public boolean hasBirthday() {
         return birthday != null;
+    }
+
+    public boolean hasFriendsIds() {
+        return ! (friendsIds == null || friendsIds.isEmpty());
     }
 }

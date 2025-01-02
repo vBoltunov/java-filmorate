@@ -7,6 +7,9 @@ import ru.yandex.practicum.filmorate.dto.user.requests.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.requests.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.model.user.User;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserMapper {
 
@@ -27,6 +30,12 @@ public final class UserMapper {
         dto.setLogin(user.getLogin());
         dto.setName(user.getName());
         dto.setBirthday(user.getBirthday());
+
+        dto.setFriendsIds(
+                user.getFriendsIds() != null
+                        ? new ArrayList<>(user.getFriendsIds())
+                        : Collections.emptyList()
+        );
 
         return dto;
     }

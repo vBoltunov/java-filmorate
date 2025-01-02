@@ -49,6 +49,7 @@ public final class FilmMapper {
                 : new ArrayList<>();
 
         dto.setGenres(genres);
+        dto.setLikes(film.getLikes());
 
         return dto;
     }

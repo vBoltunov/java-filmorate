@@ -53,6 +53,9 @@ public final class UserMapper {
         if (request.hasBirthday()) {
             user.setBirthday(request.getBirthday());
         }
+        if (request.hasFriendsIds()) {
+            user.setFriendsIds(request.getFriendsIds());
+        }
         return user;
     }
 }

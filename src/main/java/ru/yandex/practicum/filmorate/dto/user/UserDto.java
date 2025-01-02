@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,4 +18,5 @@ public class UserDto {
     String name;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     LocalDate birthday;
+    Collection<Long> friendsIds;
 }

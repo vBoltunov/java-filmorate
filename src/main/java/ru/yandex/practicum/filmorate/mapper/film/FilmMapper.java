@@ -67,6 +67,9 @@ public final class FilmMapper {
         if (request.hasDuration()) {
             film.setDuration(request.getDuration());
         }
+        if (request.hasLikes()) {
+            film.setLikes(request.getLikes());
+        }
         return film;
     }
 }

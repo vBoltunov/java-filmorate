@@ -94,6 +94,9 @@ public class FilmService {
             if (request.hasGenreIds()) {
                 updatedFilm.setGenreIds(request.getGenreIds());
             }
+            if (request.hasLikes()) {
+                updatedFilm.setLikes(request.getLikes());
+            }
             updatedFilm = filmStorage.updateFilm(updatedFilm);
             return FilmMapper.mapToFilmDto(updatedFilm);
         } catch (Exception e) {

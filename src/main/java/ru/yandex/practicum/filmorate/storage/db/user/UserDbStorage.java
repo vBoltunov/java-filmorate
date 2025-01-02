@@ -18,34 +18,33 @@ import java.util.Optional;
 public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
 
     private static final String FIND_ALL_QUERY = """
-        SELECT u.*,
-               GROUP_CONCAT(CONCAT(f.friend_id, ':', f.status) SEPARATOR ',') AS friend_ids
-        FROM users u
-        LEFT JOIN friends f ON u.id = f.user_id
-        GROUP BY u.id;
-        """;
+            SELECT u.*,
+                   GROUP_CONCAT(f.friend_id SEPARATOR ',') AS friends_ids
+            FROM users u
+            LEFT JOIN friends f ON u.id = f.user_id
+            GROUP BY u.id;
+            """;
     private static final String INSERT_QUERY = """
-        INSERT INTO users(name, email, login, birthday)
-        VALUES (?, ?, ?, ?);
-        """;
+            INSERT INTO users(name, email, login, birthday)
+            VALUES (?, ?, ?, ?);
+            """;
     private static final String UPDATE_QUERY = """
-        UPDATE users
-        SET name = ?, email = ?, login = ?, birthday = ?
-        WHERE id = ?;
-        """;
+            UPDATE users
+            SET name = ?, email = ?, login = ?, birthday = ?
+            WHERE id = ?;
+            """;
     private static final String FIND_BY_ID_QUERY = """
-        SELECT u.*,
-               GROUP_CONCAT(CONCAT(f.friend_id, ':', f.status) SEPARATOR ',') AS friend_ids
-        FROM users u
-        LEFT JOIN friends f ON u.id = f.user_id
-        WHERE u.id = ?
-        GROUP BY u.id;
-        """;
+            SELECT u.*, GROUP_CONCAT(f.friend_id SEPARATOR ',') AS friends_ids
+            FROM users u
+            LEFT JOIN friends f ON u.id = f.user_id
+            WHERE u.id = ?
+            GROUP BY u.id;
+            """;
     private static final String FIND_BY_EMAIL_QUERY = """
-        SELECT *
-        FROM users
-        WHERE email = ?;
-        """;
+            SELECT *
+            FROM users
+            WHERE email = ?;
+            """;
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);

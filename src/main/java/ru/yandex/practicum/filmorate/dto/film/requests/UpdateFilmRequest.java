@@ -14,7 +14,7 @@ public class UpdateFilmRequest {
     private Long duration;
     private Long mpaId;
     private List<Long> genreIds;
-    private List<Long> likes;
+    private Long likes;
 
     public boolean hasName() {
         return ! (name == null || name.isBlank());

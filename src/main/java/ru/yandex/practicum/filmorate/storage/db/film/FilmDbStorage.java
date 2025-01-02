@@ -82,7 +82,14 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public Collection<Film> getFilms() {
-        return findMany(FIND_ALL_QUERY);
+        Collection<Film> films = findMany(FIND_ALL_QUERY);
+        films.forEach(film -> {
+            List<Long> genreIds = genreStorage.getGenresByFilmId(film.getId()).stream()
+                    .map(Genre::getId)
+                    .toList();
+            film.setGenreIds(genreIds);
+        });
+        return films;
     }
 
     @Override

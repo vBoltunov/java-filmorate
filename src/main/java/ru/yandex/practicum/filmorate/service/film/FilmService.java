@@ -61,7 +61,7 @@ public class FilmService {
         } catch (RuntimeException e) {
             log.error("Error creating film: {}", e.getMessage(), e);
             throw new IllegalArgumentException("Data integrity violation: " + e.getMessage(), e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected error creating film: {}", e.getMessage(), e);
             throw e;
         }
@@ -130,11 +130,10 @@ public class FilmService {
         return new GenreDto(genre.getId(), genre.getName());
     }
 
-
     public List<FilmDto> getFilms() {
         return filmStorage.getFilms()
                 .stream()
-                .map(FilmMapper::mapToFilmDto)
+                .map(this::mapToFilmDtoWithGenres)
                 .toList();
     }
 
@@ -171,7 +170,7 @@ public class FilmService {
     public List<FilmDto> getPopularFilms(int count) {
         return filmStorage.getPopularFilms(count)
                 .stream()
-                .map(FilmMapper::mapToFilmDto)
+                .map(this::mapToFilmDtoWithGenres)
                 .toList();
     }
 

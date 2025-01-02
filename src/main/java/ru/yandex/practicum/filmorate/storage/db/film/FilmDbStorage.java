@@ -25,60 +25,54 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private final GenreStorage genreStorage;
 
     private static final String FIND_ALL_QUERY = """
-        SELECT f.*, m.name as mpa_name,
-               GROUP_CONCAT(g.id) as genre_ids,
-               GROUP_CONCAT(g.name) as genre_names
-        FROM films f
-        JOIN mpa m ON f.mpa_rating_id = m.id
-        LEFT JOIN film_genres fg ON f.id = fg.film_id
-        LEFT JOIN genres g ON fg.genre_id = g.id
-        GROUP BY f.id, m.name;
-        """;
+            SELECT f.*, m.name as mpa_name,
+                   COUNT(l.user_id) as likes,
+                   GROUP_CONCAT(g.id) as genre_ids,
+                   GROUP_CONCAT(g.name) as genre_names
+            FROM films f
+            JOIN mpa m ON f.mpa_rating_id = m.id
+            LEFT JOIN likes l ON f.id = l.film_id
+            LEFT JOIN film_genres fg ON f.id = fg.film_id
+            LEFT JOIN genres g ON fg.genre_id = g.id
+            GROUP BY f.id, m.name
+            """;
     private static final String INSERT_QUERY = """
-        INSERT INTO films(name, description, release_date, duration, mpa_rating_id)
-        VALUES (?, ?, ?, ?, ?);
-        """;
+            INSERT INTO films(name, description, release_date, duration, mpa_rating_id)
+            VALUES (?, ?, ?, ?, ?);
+            """;
     private static final String UPDATE_QUERY = """
-        UPDATE films
-        SET name = ?, description = ?, release_date = ?, duration = ?, mpa_rating_id = ?
-        WHERE id = ?;
-        """;
+            UPDATE films
+            SET name = ?, description = ?, release_date = ?, duration = ?, mpa_rating_id = ?
+            WHERE id = ?;
+            """;
     private static final String DELETE_GENRES_QUERY = """
-        DELETE FROM film_genres
-        WHERE film_id = ?;
-        """;
+            DELETE FROM film_genres
+            WHERE film_id = ?;
+            """;
     private static final String INSERT_GENRES_QUERY = """
-        INSERT INTO film_genres (film_id, genre_id)
-        VALUES (?, ?);
-        """;
+            INSERT INTO film_genres (film_id, genre_id)
+            VALUES (?, ?);
+            """;
     private static final String INSERT_LIKES_QUERY = """
-        INSERT INTO likes (film_id, user_id)
-        VALUES (?, ?);
-        """;
+            INSERT INTO likes (film_id, user_id)
+            VALUES (?, ?);
+            """;
     private static final String DELETE_LIKES_QUERY = """
-        DELETE FROM likes
-        WHERE film_id = ? AND user_id = ?;
-        """;
+            DELETE FROM likes
+            WHERE film_id = ? AND user_id = ?;
+            """;
     private static final String FIND_BY_ID_QUERY = """
-        SELECT f.*, m.name as mpa_name
-        FROM films f
-        JOIN mpa m ON f.mpa_rating_id = m.id
-        WHERE f.id = ?;
-        """;
-    private static final String FIND_POPULAR_QUERY = """
-        SELECT f.*, m.name as mpa_name,
-               COUNT(l.user_id) as likes,
-               GROUP_CONCAT(g.id) as genre_ids,
-               GROUP_CONCAT(g.name) as genre_names
-        FROM films f
-        JOIN mpa m ON f.mpa_rating_id = m.id
-        LEFT JOIN likes l ON f.id = l.film_id
-        LEFT JOIN film_genres fg ON f.id = fg.film_id
-        LEFT JOIN genres g ON fg.genre_id = g.id
-        GROUP BY f.id, m.name
-        ORDER BY likes DESC
-        LIMIT ?;
-        """;
+            SELECT f.*, m.name as mpa_name, COUNT(l.user_id) as likes
+            FROM films f
+            JOIN mpa m ON f.mpa_rating_id = m.id
+            LEFT JOIN likes l ON f.id = l.film_id
+            WHERE f.id = ?
+            GROUP BY f.id
+            """;
+    private static final String FIND_POPULAR_QUERY = FIND_ALL_QUERY + """
+            ORDER BY likes DESC
+            LIMIT ?;
+            """;
 
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper, MpaStorage mpaStorage, GenreStorage genreStorage) {
         super(jdbc, mapper);

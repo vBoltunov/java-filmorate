@@ -195,6 +195,13 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        return jdbc.query(FIND_POPULAR_QUERY, new FilmRowMapper(), count);
+        List<Film> films = jdbc.query(FIND_POPULAR_QUERY, new FilmRowMapper(), count);
+        films.forEach(film -> {
+            List<Long> genreIds = genreStorage.getGenresByFilmId(film.getId()).stream()
+                    .map(Genre::getId)
+                    .toList();
+            film.setGenreIds(genreIds);
+        });
+        return films;
     }
 }
